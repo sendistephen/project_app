@@ -1,5 +1,5 @@
 // import { hashPassword } from '@src/app/lib/auth';
-import { db } from '@src/app/lib/db';
+import { db } from '@src/lib/db';
 import { TASK_STATUS } from '@prisma/client';
 
 // Generates a random task status
