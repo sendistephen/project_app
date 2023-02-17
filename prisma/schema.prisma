@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email     String    @unique
+  firstName String?
+  lastName  String?
+  password  String
+  projects  Project[]
+  tasks     Task[]
+}
+
+model Project {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name    String
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id])
+
+  description String?
+  due         DateTime?
+  deleted     Boolean   @default(false)
+  tasks       Task[]
+
+  @@unique([ownerId, name]) // user can have two projects with the same name
+  @@index([ownerId, id]) // i need to find the project that belongs to this owner but has this id
+}
+
+// enums a set of different values that never change
+enum TASK_STATUS {
+  NOT_STARTED
+  STARTED
+  COMPLETED
+}
+
+model Task {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  status  TASK_STATUS @default(NOT_STARTED)
+  name    String
+  // In the UI there is a view where you want to get all the tasks 
+  // that the user created no matter what project they are on, so
+  // we need the owner field.
+  ownerId String
+  owner   User        @relation(fields: [ownerId], references: [id])
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+
+  description String?
+  due         DateTime?
+  deleted     Boolean   @default(false)
+
+  @@index([ownerId]) // Give all the tasks that belong to this owner
+}
