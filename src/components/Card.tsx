@@ -7,3 +7,5 @@ const Card = ({ className, children }) => {
 		</div>
 	);
 };
+
+export default Card;
