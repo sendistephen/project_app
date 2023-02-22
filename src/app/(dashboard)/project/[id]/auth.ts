@@ -1,3 +1,4 @@
+import { db } from '@src/lib/db';
 import bcrypt from 'bcryptjs';
 import { SignJWT, jwtVerify } from 'jose';
 
@@ -32,13 +33,27 @@ export const createJWT = (user) => {
 };
 
 /**
- * 
- * @param jwt 
- * @returns 
+ *
+ * @param jwt
+ * @returns
  * This function validates the JWT sent by the client and returns the payload associated with it.
  * It also decodes the secret key present in the env to confirm the validity of the token...
  */
 export const validateJWT = async (jwt) => {
 	const { payload } = await jwtVerify(jwt, new TextEncoder().encode(process.env.JWT_SECRET));
 	return payload.payload as any;
+};
+
+export const getUserFromCookie = async (cookies) => {
+	// Get the JWT from the cookie
+	const jwt = cookies.get(process.env.COOKIE_NAME);
+	// Validate the JWT and extract the user id
+	const { id } = await validateJWT(jwt);
+	// Get the user from the db based on their id
+	const user = await db.user.findUnique({
+		where: {
+			id,
+		},
+	});
+	return user;
 };
