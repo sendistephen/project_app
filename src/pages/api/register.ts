@@ -27,6 +27,6 @@ export default async function register(req: NextApiRequest, res: NextApiResponse
 			})
 		);
 		res.status(201); // Created
-		res.end();
+		res.json({});
 	}
 }

@@ -11,25 +11,34 @@ export default async function signin(req: NextApiRequest, res: NextApiResponse) 
 				email: req.body.email,
 			},
 		});
+		if (!user) {
+			res.status(401);
+			res.json({ error: 'Invalid login' });
+			return;
+		}
 		// Compare the submitted user password with the one in the database
 		const isUserFound = await comparePassword(req.body.password, user?.password);
+
 		if (isUserFound) {
 			// Create a json web token
 			const jwt = await createJWT(user);
+
 			res.setHeader(
 				'Set-Cookie',
 				serialize(process.env.COOKIE_NAME, jwt, {
 					httpOnly: true,
 					path: '/',
-					secure: process.env.NODE_ENV === 'production',
 					maxAge: 1000 * 60 * 60 * 24 * 7,
 				})
 			);
 			res.status(201);
 			res.end();
 		} else {
-			res.status(402);
-			res.end();
+			res.status(401);
+			res.json({ error: 'Invalid login' });
 		}
+	} else {
+		res.status(402);
+		res.json({});
 	}
 }

@@ -25,8 +25,9 @@ const signinContent = {
 
 const initial = { email: '', password: '', firstName: '', lastName: '' };
 
-const AuthForm = ({ mode }) => {
+const AuthForm = ({ mode }: { mode: 'register' | 'signin' }) => {
 	const [formState, setFormState] = useState({ ...initial });
+
 	const [error, setError] = useState('');
 
 	const router = useRouter();
@@ -50,6 +51,7 @@ const AuthForm = ({ mode }) => {
 		},
 		[formState.email, formState.password, formState.firstName, formState.lastName]
 	);
+
 	const content = mode === 'register' ? registerContent : signinContent;
 	return (
 		<Card>

@@ -9,6 +9,7 @@ const PUBLIC_FILE = /\.(.*)$/;
 const verifyJWT = async (jwt) => {
 	// Obtain the payload of the JWT Token by decoding it using the Text Encoder and the process environment's JWT Secret.
 	const { payload } = await jwtVerify(jwt, new TextEncoder().encode(process.env.JWT_SECRET));
+
 	return payload; // Return the decoded payload
 };
 
@@ -28,7 +29,7 @@ export default async function middleware(req, res) {
 		return NextResponse.next();
 	}
 	// Get the JWT cookie from the request
-	const jwt = req.cookies.get(process.env.JWT_COOKIE_NAME);
+	const jwt = req.cookies.get(process.env.COOKIE_NAME);
 	// If no JWT cookie is present, then redirect to the signin page
 	if (!jwt) {
 		req.nextUrl.pathname = '/signin';
@@ -37,7 +38,7 @@ export default async function middleware(req, res) {
 
 	try {
 		// Verify the JWT Token
-		await verifyJWT(jwt);
+		await verifyJWT(jwt.value);
 		// Redirect to the next page
 		return NextResponse.next();
 	} catch (error) {
