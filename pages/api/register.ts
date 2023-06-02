@@ -1,9 +1,12 @@
-import { createJWT, hashPassword } from '@src/app/(dashboard)/project/[id]/auth';
-import { db } from '@src/lib/db';
+import { db } from '@lib/db';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { serialize } from 'cookie';
+import { createJWT, hashPassword } from 'app/(dashboard)/project/[id]/auth';
 
-export default async function register(req: NextApiRequest, res: NextApiResponse) {
+export default async function register(
+	req: NextApiRequest,
+	res: NextApiResponse
+) {
 	// Check if the request was a POST request
 	if (req.method === 'POST') {
 		// Create the new user using data from the request body

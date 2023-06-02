@@ -1,9 +1,12 @@
-import { comparePassword, createJWT } from '@src/app/(dashboard)/project/[id]/auth';
-import { db } from '@src/lib/db';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { serialize } from 'cookie';
+import { db } from '@lib/db';
+import { comparePassword, createJWT } from 'app/(dashboard)/project/[id]/auth';
 
-export default async function signin(req: NextApiRequest, res: NextApiResponse) {
+export default async function signin(
+	req: NextApiRequest,
+	res: NextApiResponse
+) {
 	if (req.method === 'POST') {
 		//  find user by email address from the database
 		const user = await db.user.findUnique({
@@ -17,7 +20,10 @@ export default async function signin(req: NextApiRequest, res: NextApiResponse) 
 			return;
 		}
 		// Compare the submitted user password with the one in the database
-		const isUserFound = await comparePassword(req.body.password, user?.password);
+		const isUserFound = await comparePassword(
+			req.body.password,
+			user?.password
+		);
 
 		if (isUserFound) {
 			// Create a json web token
